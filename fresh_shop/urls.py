@@ -16,14 +16,21 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.staticfiles.urls import static
-from fresh_shop.settings import MEDIA_URL, MEDIA_ROOT
-from user import views
+from django.views.static import serve
 
+from fresh_shop import settings
+from fresh_shop.settings import MEDIA_URL, MEDIA_ROOT
+from goods import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include('user.urls', namespace='user')),
     url(r'^carts/', include('carts.urls', namespace='carts')),
     url(r'^goods/', include('goods.urls', namespace='goods')),
     url(r'^order/', include('order.urls', namespace='order')),
+
+    url(r'static/(?P<path>.*)$', serve, {"document_root": settings.STATICFILES_DIRS[0]} ),
+    url(r'media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT} ),
+
+    url(r'^$', views.index),
 ]
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
